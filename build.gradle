@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+sourceCompatibility = '17'
+group 'de.erdbeerbaerlp.dcintegrationapi'
+mainClassName = 'de.erdbeerbaerlp.dcintegrationapi.Main'
+version '1.0.0'
+
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation('com.github.Mokulu:discord-oauth2-api:1.0.2') {
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+    implementation("de.erdbeerbaerlp:toml4j:cf5b4655") {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
+}
+jar {
+
+    manifest {
+        attributes(
+                'Main-Class': mainClassName
+        )
+    }
+}
