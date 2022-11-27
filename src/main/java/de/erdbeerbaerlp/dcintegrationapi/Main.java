@@ -6,13 +6,17 @@ import io.mokulu.discord.oauth.DiscordOAuth;
 import io.mokulu.discord.oauth.model.TokensResponse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
 
 @SpringBootApplication
@@ -34,8 +38,8 @@ public class Main {
 
 
     @GetMapping(value = "/link", produces = "application/json")
-    public Link getLink(@RequestBody Link link) {
-        return db.getLink(link);
+    public Link getLink(@RequestBody final Link link) {
+        return Objects.requireNonNullElse( db.getLink(link), link);
     }
 
     @GetMapping(value = "/login", produces = "text/html")
@@ -75,7 +79,7 @@ public class Main {
                 final String id = api.fetchUser().getId();
                 try {
                     final UUID uuid = UUID.fromString(mc);
-                    db.link( id, uuid.toString().replace("-",""));
+                    db.link(id, uuid.toString().replace("-", ""));
                     return "Link successful! You can close this tab now.";
                 } catch (IllegalArgumentException e) {
                     try {
@@ -84,10 +88,10 @@ public class Main {
                         urlConnection.connect();
                         if (urlConnection.getResponseCode() == 204) return "Minecraft name not found!";
                         MCProfile p = gson.fromJson(new InputStreamReader(urlConnection.getInputStream()), MCProfile.class);
-                        if(p.id != null){
-                            db.link( id, p.id);
+                        if (p.id != null) {
+                            db.link(id, p.id);
                             return "Link successful! You can close this tab now.";
-                        }else{
+                        } else {
                             return "Link failed!";
                         }
 
