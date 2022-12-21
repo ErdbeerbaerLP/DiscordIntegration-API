@@ -48,7 +48,7 @@ public class Database implements AutoCloseable {
                 while (res != null && res.next()) {
                     if (res.wasNull())
                         return null;
-                    return new Link(res.getString(1), res.getString(2));
+                    return new Link(res.getString(2), res.getString(1));
                 }
 
             } catch (SQLException e) {
